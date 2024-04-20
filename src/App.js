@@ -1,7 +1,7 @@
 import "./App.css";
-import "./index.css"
+import "./index.css";
 import Products from "./Products";
-import { useState } from "react";
+import {  useState } from "react";
 
 function App() {
   const [search, setSearch] = useState("");
@@ -14,16 +14,21 @@ function App() {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    fetch(
-      `https://api.edamam.com/search?q=${search}&app_id=${YOUR_APP_ID}&app_key=${YOUR_APP_KEY}&from=0&to=15&calories=591-722&health=alcohol-free`
-    )
-      .then((response) => response.json())
-      .then((data) => setData(data.hits));
+    if (search.trim() !== "") {
+      fetch(
+        `https://api.edamam.com/search?q=${search}&app_id=${YOUR_APP_ID}&app_key=${YOUR_APP_KEY}&from=0&to=15&calories=591-722&health=alcohol-free`
+      )
+        .then((response) => response.json())
+        .then((data) => setData(data.hits))
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+          setData([]);
+        });
+    }
   };
 
   return (
     <div className="App">
-
       <div className="food">
         <h1>Food Recipe</h1>
         <form onSubmit={submitHandler}>
@@ -34,7 +39,7 @@ function App() {
             onChange={(e) => setSearch(e.target.value)}
           />{" "}
           <br />
-          <input type="submit" className="btn btn-success m-3" value="Search" />
+          <input type="submit" id="search" value="Search" />
         </form>
       </div>
       {data.length >= 1 ? <Products data={data} /> : null}
